@@ -1,6 +1,9 @@
 module.exports = {
   root: true,
-  extends: ['plugin:react/recommended', 'eslint:recommended'],
+  extends: [
+    // 'plugin:react/recommended',
+    'eslint:recommended',
+  ],
   plugins: ['react'],
   parserOptions: {
     ecmaFeatures: {
