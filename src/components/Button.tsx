@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ManipulationPanel = () => {
+const ManipulationPanel: React.FC = () => {
   return (
     <div className="manipulation-panel">
       <button>←</button>
