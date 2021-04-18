@@ -104,7 +104,10 @@ function App() {
       x: x + Delta[directrion].x,
       y: y + Delta[directrion].y,
     }
-    if (isCollision(fields.length, newPosition)) {
+    if (
+      isCollision(fields.length, newPosition) ||
+      isEatingMyself(fields, newPosition)
+    ) {
       unsubscribe()
       return false
     }
@@ -136,11 +139,16 @@ function App() {
     return false
   }
 
+  const isEatingMyself = (fields, position) => {
+    return fields[position.y][position.x] === 'snake'
+  }
+
   /**
    * useEffect
    */
   useEffect(() => {
     setBody([initialPosition])
+
     // ゲームの中の時間を管理する
     timer = setInterval(() => {
       setTick((tick) => tick + 1)
