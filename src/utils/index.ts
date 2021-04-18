@@ -2,15 +2,18 @@ type Coordinate = {
   x: number
   y: number
 }
-// [{x:17,y:17}]
-// type snakeObject = object[]
 
-const getFoodPosition = (
+/**
+ *エサの座標を決定する関数
+ * @param fieldSize {number}フィールドのサイズ
+ * @param excludes {Array<Coordinate>}エサを配置しない場所
+ * @returns {Coordinate} エサの座標
+ */
+export const getFoodPosition = (
   fieldSize: number,
   excludes: Array<Coordinate>
 ): Coordinate => {
   for (;;) {
-    console.log(typeof excludes, excludes)
     const x = Math.floor(Math.random() * (fieldSize - 2)) + 1
     const y = Math.floor(Math.random() * (fieldSize - 2)) + 1
     const conflict = excludes.some(
@@ -22,6 +25,11 @@ const getFoodPosition = (
   }
 }
 
+/**
+ * 初期のフィールドを宣言する関数
+ * @param fieledSize {number} フィールドサイズ
+ * @param snake {Coordinate} スネークの座標
+ */
 export const initFields = (fieledSize: number, snake: Coordinate) => {
   const fileds = []
   for (let i = 0; i < fieledSize; i++) {
