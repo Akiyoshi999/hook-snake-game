@@ -3,54 +3,19 @@ import Button from './components/Button'
 import Field from './components/Field'
 import ManipulationPanel from './components/ManipulationPanel'
 import Navigation from './components/Navigation'
+import {
+  defaultDifficulty,
+  defaultInterval,
+  Delta,
+  Difficulty,
+  Direction,
+  DirectionKeyCodeMap,
+  GameStatus,
+  initialPosition,
+  initialValues,
+  OppositeDirection,
+} from './constants'
 import { getFoodPosition, initFields } from './utils'
-
-const initialPosition = { x: 17, y: 17 }
-const initialValues = initFields(35, initialPosition)
-const defaultInterval = 100
-const defaultDifficulty = 3
-const Difficulty = [1000, 700, 500, 300, 100]
-
-// 定数宣言
-// ゲームの状態
-const GameStatus = Object.freeze({
-  init: 'init',
-  playing: 'playing',
-  suspend: 'suspend',
-  gameover: 'gameover',
-})
-
-// スネークの進行方向
-const Direction = Object.freeze({
-  up: 'up',
-  right: 'right',
-  left: 'left',
-  down: 'down',
-})
-
-// スネークの進行方向変更の可否判定
-const OppositeDirection = Object.freeze({
-  up: 'down',
-  right: 'left',
-  left: 'right',
-  down: 'up',
-})
-
-// スネーク
-const Delta = Object.freeze({
-  up: { x: 0, y: -1 },
-  right: { x: 1, y: 0 },
-  left: { x: -1, y: 0 },
-  down: { x: 0, y: 1 },
-})
-
-// キーバインド
-const DirectionKeyCodeMap = Object.freeze({
-  37: Direction.left,
-  38: Direction.up,
-  39: Direction.right,
-  40: Direction.down,
-})
 
 let timer = undefined
 const unsubscribe = () => {
