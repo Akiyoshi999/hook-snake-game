@@ -72,6 +72,7 @@ function App() {
    * 関数の宣言
    */
   const onStart = () => setStatus(GameStatus.playing)
+  const onSuspend = () => setStatus(GameStatus.suspend)
 
   const onRestart = () => {
     timer = setInterval(() => {
@@ -204,7 +205,12 @@ function App() {
         <Field fields={fields} />
       </main>
       <footer className="footer">
-        <Button status={status} onStart={onStart} onRestart={onRestart} />
+        <Button
+          status={status}
+          onStart={onStart}
+          onSuspend={onSuspend}
+          onRestart={onRestart}
+        />
         <ManipulationPanel onChange={onChangeDirection} />
       </footer>
     </div>
