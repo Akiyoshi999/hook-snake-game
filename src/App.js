@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import ManipulationPanel from './components/Button'
+import Button from './components/Button'
 import Field from './components/Field'
-import Button from './components/ManipulationPanel'
+import ManipulationPanel from './components/ManipulationPanel'
 import Navigation from './components/Navigation'
 import { initFields } from './utils'
 
-const initalPosition = { x: 17, y: 17 }
-const initalValues = initFields(35, initalPosition)
+const initialPosition = { x: 17, y: 17 }
+const initialValues = initFields(35, initialPosition)
 const defaultInterval = 100
+
+const GameStatus = Object.freeze({
+  init: 'init',
+  playing: 'playing',
+  suspend: 'suspend',
+  gameover: 'gameover',
+})
 
 let timer = undefined
 const unsubscribe = () => {
@@ -18,12 +25,13 @@ const unsubscribe = () => {
 }
 
 function App() {
-  const [fields, setFields] = useState(initalValues)
+  const [fields, setFields] = useState(initialValues)
   const [position, setPotision] = useState()
+  const [status, setStatus] = useState(GameStatus.init)
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
-    setPotision(initalPosition)
+    setPotision(initialPosition)
     // ゲームの中の時間を管理する
     timer = setInterval(() => {
       setTick((tick) => tick + 1)
@@ -32,20 +40,51 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (!position) {
+    if (!position || status !== GameStatus.playing) {
       return
     }
-    goUP()
+    const canContinue = goUP()
+    if (!canContinue) {
+      unsubscribe()
+      setStatus(GameStatus.gameover)
+    }
   }, [tick])
+
+  const onStart = () => setStatus(GameStatus.playing)
+  const onRestart = () => {
+    timer = setInterval(() => {
+      setTick((tick) => tick + 1)
+    }, defaultInterval)
+    // setDirection(Direction.up)
+    setStatus(GameStatus.init)
+    setPotision(initialPosition)
+    setFields(initFields(35, initialPosition))
+  }
 
   // スネークの進行
   const goUP = () => {
     const { x, y } = position
-    const nextY = Math.max(y - 1, 0)
+    const newPosition = { x, y: y - 1 }
+    if (isCollision(fields.length, newPosition)) {
+      unsubscribe()
+      return false
+    }
     fields[y][x] = ''
-    fields[nextY][x] = 'snake'
-    setPotision({ x, y: nextY })
+    fields[newPosition.y][x] = 'snake'
+    setPotision(newPosition)
     setFields(fields)
+    return true
+  }
+
+  // スネークがぶつかっているか判定
+  const isCollision = (fieldSize, position) => {
+    if (position.y < 0 || position.x < 0) {
+      return true
+    }
+    if (position.y > fieldSize - 1 || position.x > fieldSize - 1) {
+      return true
+    }
+    return false
   }
 
   return (
@@ -59,11 +98,8 @@ function App() {
       <main className="main">
         <Field fields={fields} />
       </main>
-      <div style={{ padding: '16px' }}>
-        <button onClick={goUP}>進む</button>
-      </div>
       <footer className="footer">
-        <Button />
+        <Button status={status} onStart={onStart} onRestart={onRestart} />
         <ManipulationPanel />
       </footer>
     </div>

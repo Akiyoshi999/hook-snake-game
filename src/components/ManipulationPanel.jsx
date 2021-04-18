@@ -1,11 +1,14 @@
 import React from 'react'
 
-const Button = () => {
+const ManipulationPanel = () => {
   return (
-    <div className="button">
-      <button>start</button>
+    <div className="manipulation-panel">
+      <button>←</button>
+      <button>↑</button>
+      <button>↓</button>
+      <button>→</button>
     </div>
   )
 }
 
-export default Button
+export default ManipulationPanel
