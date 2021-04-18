@@ -2,10 +2,12 @@ module.exports = {
   root: true,
   extends: [
     // 'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
     'eslint:recommended',
   ],
-  plugins: ['react'],
+  plugins: ['react', '@typescript-eslint'],
   parserOptions: {
+    parser: '@typescript-eslint/parser',
     ecmaFeatures: {
       jsx: true,
     },
