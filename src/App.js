@@ -7,7 +7,9 @@ import { getFoodPosition, initFields } from './utils'
 
 const initialPosition = { x: 17, y: 17 }
 const initialValues = initFields(35, initialPosition)
-const defaultInterval = 500
+const defaultInterval = 100
+const defaultDifficulty = 3
+const Difficulty = [1000, 700, 500, 300, 100]
 
 // 定数宣言
 // ゲームの状態
@@ -66,6 +68,7 @@ function App() {
   const [body, setBody] = useState([])
   const [status, setStatus] = useState(GameStatus.init)
   const [tick, setTick] = useState(0)
+  const [difficulty, setDifficulty] = useState(defaultDifficulty)
   const [directrion, setDirection] = useState(Direction.up)
 
   /**
@@ -96,6 +99,19 @@ function App() {
       setDirection(newDirection)
     },
     [directrion, status]
+  )
+
+  const onChangeDifficulty = useCallback(
+    (difficulty) => {
+      if (status !== GameStatus.init) {
+        return
+      }
+      if (difficulty < 1 || difficulty > Difficulty.length) {
+        return
+      }
+      setDifficulty(difficulty)
+    },
+    [status, difficulty]
   )
 
   // スネークの進行
@@ -151,11 +167,12 @@ function App() {
     setBody([initialPosition])
 
     // ゲームの中の時間を管理する
+    const interval = Difficulty[difficulty - 1]
     timer = setInterval(() => {
       setTick((tick) => tick + 1)
-    }, defaultInterval)
+    }, interval)
     return unsubscribe //return コンポーネントが削除される時に実行する関数
-  }, [])
+  }, [difficulty])
 
   /**
    * 時間を監視し、進行可能であればスネークを動かす
@@ -199,7 +216,11 @@ function App() {
         <div className="title-container">
           <h1 className="title">Snake Game</h1>
         </div>
-        <Navigation />
+        <Navigation
+          length={body.length}
+          difficulty={difficulty}
+          onChangeDifficulty={onChangeDifficulty}
+        />
       </header>
       <main className="main">
         <Field fields={fields} />
