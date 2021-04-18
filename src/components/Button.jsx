@@ -6,7 +6,7 @@ const Button = ({ status, onStart, onRestart }) => {
       {status == 'gameover' ? (
         <button onClick={onRestart}>gameover</button>
       ) : (
-        <button onClick={onStart}>gamestart</button>
+        <button onClick={onStart}>start</button>
       )}
     </div>
   )
