@@ -3,11 +3,11 @@ import Button from './components/Button'
 import Field from './components/Field'
 import ManipulationPanel from './components/ManipulationPanel'
 import Navigation from './components/Navigation'
-import { initFields } from './utils'
+import { getFoodPosition, initFields } from './utils'
 
 const initialPosition = { x: 17, y: 17 }
 const initialValues = initFields(35, initialPosition)
-const defaultInterval = 1000
+const defaultInterval = 500
 
 // 定数宣言
 // ゲームの状態
@@ -63,7 +63,7 @@ function App() {
    * useStateの宣言
    */
   const [fields, setFields] = useState(initialValues)
-  const [position, setPotision] = useState()
+  const [body, setBody] = useState([])
   const [status, setStatus] = useState(GameStatus.init)
   const [tick, setTick] = useState(0)
   const [directrion, setDirection] = useState(Direction.up)
@@ -78,7 +78,7 @@ function App() {
       setTick((tick) => tick + 1)
     }, defaultInterval)
     setStatus(GameStatus.init)
-    setPotision(initialPosition)
+    setBody([initialPosition])
     setDirection(Direction.up)
     setFields(initFields(35, initialPosition))
   }
@@ -99,18 +99,31 @@ function App() {
 
   // スネークの進行
   const handleMoving = () => {
-    const { x, y } = position
+    const { x, y } = body[0]
     const newPosition = {
       x: x + Delta[directrion].x,
       y: y + Delta[directrion].y,
     }
-    if (isCollision(fields.length, newPosition)) {
+    if (
+      isCollision(fields.length, newPosition) ||
+      isEatingMyself(fields, newPosition)
+    ) {
       unsubscribe()
       return false
     }
-    fields[y][x] = ''
+    const newBody = [...body]
+    // 次のポジションがfoodでない場合、bodyの末尾を空文字でリセット
+    if (fields[newPosition.y][newPosition.x] !== 'food') {
+      const removingTrack = newBody.pop()
+      fields[removingTrack.y][removingTrack.x] = ''
+    } else {
+      const food = getFoodPosition(fields.length, [...newBody, newPosition])
+      fields[food.y][food.x] = 'food'
+    }
     fields[newPosition.y][newPosition.x] = 'snake'
-    setPotision(newPosition)
+    newBody.unshift(newPosition)
+
+    setBody(newBody)
     setFields(fields)
     return true
   }
@@ -126,11 +139,16 @@ function App() {
     return false
   }
 
+  const isEatingMyself = (fields, position) => {
+    return fields[position.y][position.x] === 'snake'
+  }
+
   /**
    * useEffect
    */
   useEffect(() => {
-    setPotision(initialPosition)
+    setBody([initialPosition])
+
     // ゲームの中の時間を管理する
     timer = setInterval(() => {
       setTick((tick) => tick + 1)
@@ -142,7 +160,7 @@ function App() {
    * 時間を監視し、進行可能であればスネークを動かす
    */
   useEffect(() => {
-    if (!position || status !== GameStatus.playing) {
+    if (!body.length === 0 || status !== GameStatus.playing) {
       return
     }
     const canContinue = handleMoving()
