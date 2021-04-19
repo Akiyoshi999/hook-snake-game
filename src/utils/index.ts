@@ -43,3 +43,32 @@ export const initFields = (fieledSize: number, snake: Coordinate) => {
 
   return fileds
 }
+
+/**
+ * スネークがぶつかっているか判定
+ * @param fieldSize
+ * @param position
+ * @returns {boolean}
+ */
+export const isCollision = (
+  fieldSize: number,
+  position: Coordinate
+): boolean => {
+  if (position.y < 0 || position.x < 0) {
+    return true
+  }
+  if (position.y > fieldSize - 1 || position.x > fieldSize - 1) {
+    return true
+  }
+  return false
+}
+
+/**
+ * 自分自身を食べていないかの判定
+ * @param fields
+ * @param position
+ * @returns
+ */
+export const isEatingMyself = (fields: any, position: Coordinate): boolean => {
+  return fields[position.y][position.x] === 'snake'
+}

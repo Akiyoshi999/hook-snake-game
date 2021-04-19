@@ -1,12 +1,5 @@
 import React from 'react'
-
-// ゲームの状態
-const GameStatus = Object.freeze({
-  init: 'init',
-  playing: 'playing',
-  suspend: 'suspend',
-  gameover: 'gameover',
-})
+import { GameStatus } from '../constants'
 
 const Button = ({ status, onStart, onSuspend, onRestart }) => {
   return (
