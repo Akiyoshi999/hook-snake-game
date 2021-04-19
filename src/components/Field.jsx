@@ -1,4 +1,7 @@
 import React from 'react'
+// type FieldDef = {
+//   [n: numbeer]: string[],
+// }
 
 const Field = ({ fields }) => {
   return (
